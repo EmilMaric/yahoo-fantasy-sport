@@ -35,6 +35,10 @@ class Base(object):
     def xml_builder_proposetrade(self,):
         raise NotImplementedError
         
+    @abc.abstractmethod
+    def xml_builder_roster(self,):
+        raise NotImplementedError
+        
     #@abc.abstractmethod
     #def xml_builderpost(self,):
         #raise NotImplementedError
@@ -47,7 +51,7 @@ class Base(object):
         #"""Return object as a json string
         #"""
         #return json.dumps(self.json, ensure_ascii=True).encode('ascii')
-
+    
     def to_xml(self,):
         """Return object as a xml string
         """
@@ -72,10 +76,10 @@ class Roster(Base):
             self.coverage = date
             self.coverage_type = 'date'
 
-        self.json_builder()
-        self.xml_builder()
+        #self.json_builder()
+        self.xml_builder_roster()
 
-    def xml_builder(self,):
+    def xml_builder_roster(self,):
         """Convert object to xml
         """
         content = ctree.Element('fantasy_content')
@@ -92,20 +96,42 @@ class Roster(Base):
             players.append(player.xml)
 
         self.xml = content
+        
 
-    def json_builder(self,):
-        """Convert object to json
-        """
-        self.json = {
-            'fantasy_content':{
-                'roster':{
-                    'coverage_type': self.coverage_type,
-                    self.coverage_type : self.coverage,
-                    'players': [ player.json for player in self.players ]
-                }
-            }
-        }
-        return self.json
+    #def json_builder(self,):
+        #"""Convert object to json
+        #"""
+        #self.json = {
+            #'fantasy_content':{
+                #'roster':{
+                    #'coverage_type': self.coverage_type,
+                    #self.coverage_type : self.coverage,
+                    #'players': [ player.json for player in self.players ]
+                #}
+            #}
+        #}
+        #return self.json
+        
+    def xml_builder_addordrop(self,):
+        return None
+        
+    def xml_builder_adddrop(self,):
+        return None
+        
+    def xml_builder_proposetrade(self,):
+        return None
+        
+    def xml_builder_put(self,):
+        return None
+        
+    def xml_builder_roster(self,):
+        return None
+    
+    def xml_builder_player(self,):
+        return None
+        
+    def xml_builder_player_proposetrade(self,):
+        return None
     
 
 class Player(Base):
@@ -140,10 +166,14 @@ class Player(Base):
         player_key = ctree.SubElement(player, 'player_key')
         player_key.text = self.player_key
         
-        transaction_data = ctree.SubElement(player, 'transaction_data')
+        if self.position:
+            position = ctree.SubElement(player, 'position')
+            position.text = self.position
         
-        type = ctree.SubElement(transaction_data, 'type')
-        type.text = self.type
+        if self.type:
+            transaction_data = ctree.SubElement(player, 'transaction_data')
+            type = ctree.SubElement(transaction_data, 'type')
+            type.text = self.type
         
         if self.destination_team_key:
             destination_team_key = ctree.SubElement(transaction_data, 'destination_team_key')
@@ -198,6 +228,15 @@ class Player(Base):
         return None
         
     def xml_builder_put(self,):
+        return None
+        
+    def xml_builder_player(self,):
+        return None
+        
+    def xml_builder_player_proposetrade(self,):
+        return None
+        
+    def xml_builder_roster(self,):
         return None
         
         
@@ -341,5 +380,8 @@ class Transaction(Base):
         return None
         
     def xml_builder_player_proposetrade(self,):
+        return None
+        
+    def xml_builder_roster(self,):
         return None
         

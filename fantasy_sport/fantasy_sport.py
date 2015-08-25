@@ -55,6 +55,22 @@ class FantasySport(object):
         
         return response
         
+    def _rosterput(self, uri, roster):
+        """
+        - uri : roster resource uri
+        - roster : roster object
+        """
+        headers = {'Content-Type':'application/xml'}
+        #data = roster.to_json() if self.fmt == 'json' else roster.to_xml() # Getting roster xml or json according to self.fmt
+        data = roster.to_xml()
+        print data
+        
+        response = self.oauth.session.put(uri, data=data, headers=headers)
+        print response.status_code
+        print response.reason
+        
+        return response
+        
     def _post(self, uri, transaction):
         """
         - uri : roster resource uri
@@ -383,7 +399,7 @@ class FantasySport(object):
         >>> yfs.get_roster_players(['238.l.627062'])
         """
         
-        uri = self._build_uri(None, team_keys, sub='roster/players')
+        uri = self._build_uri(None, team_keys, sub='roster')
         uri = 'team/{0}'.format(uri) # Done to avoid having 'team=238.l.627062', which doesn't work for this resource
 
         if week: 
@@ -394,7 +410,7 @@ class FantasySport(object):
         response = self._get(uri)
         return response 
 
-    def set_roster_players(self, team_keys, roster):
+    #def set_roster_players(self, team_keys, roster):
         """
         >>> from fantasy_sport import Roster, Player
         >>> p1 = Player('242.p.8332','WR')
@@ -402,11 +418,26 @@ class FantasySport(object):
         >>> roster = Roster([p1, p2], date='2015-01-11')
         >>> yfs.set_roster_players(['238.l.627062.t.1'], roster)
         """
+        #uri = self._build_uri(None, team_keys, sub='roster')
+        #uri = 'team/{0}'.format(uri)
+
+        #response = self._put(uri, roster)
+        #return response 
+        
+    def set_roster_players(self, player_key1, pos1, player_key2, pos2, team_keys, date):
+        """
+        >>> Description to follow
+        """
         uri = self._build_uri(None, team_keys, sub='roster')
         uri = 'team/{0}'.format(uri)
-
-        response = self._put(uri, roster)
-        return response 
+        
+        p1 = Player(player_key1, position=pos1)
+        p2 = Player(player_key2, position=pos2)
+        
+        roster = Roster(players=[p1,p2], date=date)
+        
+        response = self._rosterput(uri, roster)
+        return response
         
         
     ##############################################
@@ -552,7 +583,7 @@ class FantasySport(object):
         yfs.add_player('346.p.9171', '346.l.1328.t.12', ['346.l.1328'])
         """
         uri = self._build_uri(None, league_key, sub='transactions')
-        uri = 'league/{2}'.format(uri)
+        uri = 'league/{0}'.format(uri)
         
         p1 = Player(player_keys, type='add', destination_team_key=team_key)
         transaction = Transaction('add', players=[p1])

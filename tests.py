@@ -233,9 +233,9 @@ class TestFantasySportRoster(unittest.TestCase):
         #logging.debug(pretty_json(response.content))
         self.assertEqual(response.status_code, 200)   
 
-    #def test_set_roster_players(self,):
-    #    response = self.yfs.set_roster_players(['346.l.1328.t.12'])
-    #    self.assertEqual(response.status_code, 200)
+    def test_set_roster_players(self,):
+        response = self.yfs.set_roster_players('346.p.7710', 'OF', '346.p.9377', 'BN', ['346.l.1328.t.12'], '2015-08-20')
+        self.assertEqual(response.status_code, 201)
         
 """
 class TestFantasySportTransaction(unittest.TestCase):
@@ -259,17 +259,6 @@ class TestFantasySportTransaction(unittest.TestCase):
         logging.debug(pretty_xml(response.content))
         self.assertEqual(response.status_code, 201)
 """        
-        
-class TestFantasySportRoster(unittest.TestCase):
-
-    def setUp(self,):
-        oauth = OAuth1(None, None, from_file='oauth.json', base_url='http://fantasysports.yahooapis.com/fantasy/v2/')
-        self.yfs = FantasySport(oauth)
-
-    def test_get_roster_players(self,):
-        response = self.yfs.get_roster_players(['346.l.1328.t.12'])
-        logging.debug(pretty_json(response.content))
-        self.assertEqual(response.status_code, 200)
         
 
 class TestPlayer(unittest.TestCase):
@@ -314,7 +303,7 @@ class TestRoster(unittest.TestCase):
         expected = b'<fantasy_content><roster><coverage_type>date</coverage_type><date>2015-01-01</date><players><player><player_key>242.p.8332</player_key><position>WR</position></player><player><player_key>242.p.8334</player_key><position>WL</position></player></players></roster></fantasy_content>'
         logging.debug(pretty_xml(self.roster.to_xml()))
         self.assertEqual(expected, self.roster.to_xml())
-"""        
+        
 class TestPaulRoster(unittest.TestCase):    
     
     def setUp(self,):
@@ -322,10 +311,7 @@ class TestPaulRoster(unittest.TestCase):
         self.yfs = FantasySport(oauth)
     
     def test_roster_fo_realz(self,):
-        players = [Player('346.p.8171', 'OF'), Player('346.p.9719','BN')]
-        self.roster = Roster(players, date='2015-07-21')
-        response = self.yfs.set_roster_players(['346.l.1328.t.12'], self.roster)
-        logging.debug(pretty_xml(response.content))
+        response = self.yfs.add_and_drop_player('346.p.9140', '346.p.8728', '346.l.1328.t.12', ['346.l.1328'])
         self.assertEqual(response.status_code, 201)
         
     def test_add_with_waiver(self,):
@@ -350,7 +336,7 @@ class TestPaulRoster(unittest.TestCase):
     def test_delete_waiver(self,):
         response = self.yfs.delete_waiver('346.l.1328.w.c.12_8922_9723', '1', '5')
         self.assertEqual(response.status_code, 201)
-"""
+
 
         
 class TestTransactionPut(unittest.TestCase):
