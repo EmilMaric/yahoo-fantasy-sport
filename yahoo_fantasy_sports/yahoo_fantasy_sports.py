@@ -1,8 +1,8 @@
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
 
 import json
 
-from . import GamesFactory
+from .games import GamesFactory
 from .utils import base_url, yfs_request
 
 

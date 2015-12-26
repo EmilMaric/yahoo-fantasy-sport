@@ -53,7 +53,10 @@ def yfs_request(oauth, uri):
     try:
         response.raise_for_status()
     except HTTPError as h:
-        msg = h.message + '\n' + response.json()['error']['description']
+        try:
+            msg = h.message + '\n' + response.json()['error']['description']
+        except ValueError:
+            msg = response.reason
         raise HTTPError(msg)
 
     return response.json()
